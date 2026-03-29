@@ -1,0 +1,9 @@
+# IDE
+.vscode
+
+# Dataset images
+data/Normal
+data/Normal/*.jpeg
+
+data/Pneumonia
+data/Pneumonia/*.jpeg
