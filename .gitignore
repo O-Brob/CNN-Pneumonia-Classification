@@ -7,3 +7,6 @@ data/Normal/*.jpeg
 
 data/Pneumonia
 data/Pneumonia/*.jpeg
+
+# Cache
+src/__pycache__
