@@ -5,6 +5,11 @@ from torchvision import datasets, transforms
 from src import config
 
 # ===== Method definitions ===== #
+
+# TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# TODO: !!Does not use Augmentation to remove great biases yet!!
+# TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 def create_dataloaders():
     # Create a standard transformation on all images s.t.
     # sizes are uniform and representation is as tensors.
