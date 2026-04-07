@@ -1,0 +1,6 @@
+# GPU Support - CUDA 13.0
+torch==2.11.0 --index-url https://download.pytorch.org/whl/cu130
+torchvision==0.26.0 --index-url https://download.pytorch.org/whl/cu130
+
+# Other dependencies
+# ... None yet
