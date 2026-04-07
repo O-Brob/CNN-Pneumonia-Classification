@@ -1,6 +1,8 @@
 # ===== Imports ===== #
 import torch
 from src import config
+from torch import nn, optim
+from torch.utils.data import DataLoader
 
 # ===== Training methods ===== #
 
@@ -9,7 +11,22 @@ from src import config
 # TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Fit the model to the training data
-def model_fit(model, optimizer, criterion, train_dl):
+def model_fit(
+    model: nn.Module, 
+    optimizer: optim.Optimizer, 
+    criterion: nn.modules.loss._Loss, 
+    train_dl: DataLoader) -> None:
+    """Training loop for the Convolutional Neural Network.
+
+    Args:
+        model (nn.Module): The neural network architecture to train.
+        optimizer (optim.Optimizer): The optimization algorithm.
+        criterion (nn.modules.loss._Loss): The loss function.
+        train_dl (DataLoader): The data loader providing (input, label) batches.
+        
+    Returns:
+        None: The function saves the model to disk and prints progress to the console.
+    """
     # Set model in training mode
     model.train()
     
