@@ -75,19 +75,19 @@ def model_fit(
 
 # ===== Evaluation Methods ===== #
 
-# Evaluate the model's performance over an unseen test set
-def model_eval(model: nn.Module, test_dl: DataLoader) -> None:
+# Evaluate the model's performance over an unseen data set
+def model_eval(model: nn.Module, eval_dl: DataLoader) -> None:
     """ 
-    Evaluation loop for the Convolutional Neural Network, 
-    given the provided test set data loader. 
+    Evaluation loop for the Convolutional Neural Network, given the
+    provided data loader for a data set to evaluate model performance on. 
 
     Args:
         model (nn.Module): The neural network architecture to evaluate.
-        test_dl (DataLoader): The data loader providing (input, label) batches.
+        eval_dl (DataLoader): The data loader providing (input, label) batches to evaluate on.
         
     Returns:
         None: The function outputs the evaluation accuracy on the standard output stream,
-        alongside the fraction of correct predictions w.r.t. the total number of test set samples.
+        alongside the fraction of correct predictions w.r.t. the total number of eval set samples.
     """
     # Set model to evaluation mode
     model.eval()
@@ -104,7 +104,7 @@ def model_eval(model: nn.Module, test_dl: DataLoader) -> None:
     
     # Disable gradient calculation to save memory and speed up computations
     with torch.no_grad():
-        for data in test_dl:
+        for data in eval_dl:
             inputs, labels = data
             
             # Move data to GPU if available
