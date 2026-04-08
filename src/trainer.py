@@ -76,5 +76,57 @@ def model_fit(
 # ===== Evaluation Methods ===== #
 
 # Evaluate the model's performance over an unseen test set
-def model_eval(model, test_dl):
-    pass
+def model_eval(model: nn.Module, test_dl: DataLoader) -> None:
+    """ 
+    Evaluation loop for the Convolutional Neural Network, 
+    given the provided test set data loader. 
+
+    Args:
+        model (nn.Module): The neural network architecture to evaluate.
+        test_dl (DataLoader): The data loader providing (input, label) batches.
+        
+    Returns:
+        None: The function outputs the evaluation accuracy on the standard output stream,
+        alongside the fraction of correct predictions w.r.t. the total number of test set samples.
+    """
+    # Set model to evaluation mode
+    model.eval()
+    
+    # Move the model to GPU if available
+    print(f"Evaluation is initialized with (cuda/cpu): {config.DEVICE}")
+    model.to(config.DEVICE)
+    
+    # Counters
+    correct_preds = 0
+    tot_samples   = 0
+    
+    print("Evaluation started. Please wait.")
+    
+    # Disable gradient calculation to save memory and speed up computations
+    with torch.no_grad():
+        for data in test_dl:
+            inputs, labels = data
+            
+            # Move data to GPU if available
+            inputs = inputs.to(config.DEVICE)
+            labels = labels.to(config.DEVICE).float().unsqueeze(1)
+            
+            # Forward pass
+            outputs = model(inputs)
+            
+            # Calculate accuracy.
+            # Turn raw output logits into probabilities via sigmoid
+            probs = torch.sigmoid(outputs) # sigmoid(x) = 1 / (1+e^(−x)​)
+            preds = (probs >= 0.5).float() # .5 threshold to get pred: 0/1
+            
+            # Sum boolean representation of tensor and convert
+            # to a standard numeric scalar for comparison
+            correct_preds += (preds == labels).sum().item()
+            tot_samples   += labels.size(0) # size(0) is batch size
+            
+    # Finalize accuracy percentage
+    accuracy = (correct_preds / tot_samples) * 100
+    
+    # Output accuracy result
+    print("Evaluation Completed:")
+    print(f"Accuracy: {accuracy:.2f}%  --  ({correct_preds}/{tot_samples})")
