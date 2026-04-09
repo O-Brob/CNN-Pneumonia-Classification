@@ -7,6 +7,15 @@ from src import config
 
 # ===== Convolutional Neural Network Class ===== #
 class CNN(nn.Module):
+    """VGG-inspired Convolutional Neural Network for binary classification.
+    
+    The architecture consists of three convolutional blocks (Conv->BN->ReLU->Pool->Dropout)
+    followed by a fully connected linear classification head.
+
+    Attributes:
+        Expected Input: 256x256 grayscale images with one color channel.
+        Output, given expected input: Raw logits for binary classification (not probabilities!)
+    """
     # Define Convolutional Neural Network structure (VGG-inspired)
     def __init__(self):
         super(CNN, self).__init__()
@@ -34,13 +43,22 @@ class CNN(nn.Module):
     
     # Forward propagation for the model
     # Each block goes through ConvN -> BN -> ReLU -> Max Pooling
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward Propagation for the Convolutional Neural Network model.
+
+        Args:
+            x (torch.Tensor): Input images of shape (batch, 1, 256, 256)
+
+        Returns:
+            torch.Tensor: Logits tensor of shape (batch, 1)
+        """
         # Forward propagate block 1
         x = self.conv1(x)
         x = self.batch1(x)
         x = F.relu(x)
         x = self.pool(x)
         x = self.dropout(x)
+        # Tensor: (batch, 32, 128, 128)
         
         # Forward propagate block 2
         x = self.conv2(x)
@@ -48,6 +66,7 @@ class CNN(nn.Module):
         x = F.relu(x)
         x = self.pool(x)
         x = self.dropout(x)
+        # Tensor: (batch, 64, 64, 64)
         
         # Forward propagate block 3
         x = self.conv3(x)
@@ -55,6 +74,7 @@ class CNN(nn.Module):
         x = F.relu(x)
         x = self.pool(x)
         x = self.dropout(x)
+        # Tensor: (batch, 128, 32, 32)
         
         # Flattening; (128, 32, 32) -> (131072)
         x = torch.flatten(x, 1)
