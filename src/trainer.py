@@ -6,16 +6,14 @@ from torch.utils.data import DataLoader
 
 # ===== Training methods ===== #
 
-# TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# TODO: !!Does not use holdout validation yet!!
-# TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 # Fit the model to the training data
 def model_fit(
     model: nn.Module, 
     optimizer: optim.Optimizer, 
     criterion: nn.modules.loss._Loss, 
-    train_dl: DataLoader) -> None:
+    train_dl: DataLoader,
+    val_dl: DataLoader,
+    patience: int) -> None:
     """Training loop for the Convolutional Neural Network.
 
     Args:
@@ -27,15 +25,17 @@ def model_fit(
     Returns:
         None: The function saves the model to disk and prints progress to the console.
     """
-    # Set model in training mode
-    model.train()
-    
     # Move the model to GPU if available
     print(f"Training is initialized with (cuda/cpu): {config.DEVICE}")
     model.to(config.DEVICE)
     
-    # TODO: Replace with holdout validation
+    # Variables to track holdout state
+    lowest_val_loss  = float("inf")
+    patience_counter = 0
+    
     for epoch in range(config.EPOCHS):
+        # ===== Training Phase ===== #
+        model.train()
         fit_loss = 0.0
         
         # Enumarate to track progress
@@ -56,6 +56,7 @@ def model_fit(
             
             # Loss calculation using given criterion
             loss = criterion(outputs, labels)
+            fit_loss += loss.item()
             
             # Backpropagate (calculate gradient anew)
             loss.backward()
@@ -63,14 +64,54 @@ def model_fit(
             # Update weights of models based on backward propagation
             optimizer.step()
             
-            # Output progress
-            fit_loss += loss.item()
-            if(i % 100 == 99):
-                print(f"[Epoch: {epoch +1}, {i + 1:5d}] Loss: {fit_loss / 100}")
-                fit_loss = 0.0
+        # Get average training loss for this epoch
+        avg_fit_loss = fit_loss / len(train_dl)
+            
+        # ===== Validation Phase ===== #
+        model.eval()
+        val_loss = 0.0
+        
+        with torch.no_grad():
+            for data in val_dl:
+                val_inputs, val_labels = data
+                
+                #  Move data to GPU if available
+                val_inputs = val_inputs.to(config.DEVICE)
+                val_labels = val_labels.to(config.DEVICE).float().unsqueeze(1)
+                
+                # Forward pas to get initial predictions
+                val_outputs = model(val_inputs)
+                
+                # Loss calculation using given criterion
+                val_batch_loss = criterion(val_outputs, val_labels)
+                
+                # Add loss to val_loss 
+                val_loss += val_batch_loss.item()
+            
+        # Get average validation loss for this epoch
+        avg_val_loss = val_loss /len(val_dl)
+        
+        print(f"[Epoch: {epoch + 1}] Train Loss: {avg_fit_loss:.5f}  --  Val Loss: {avg_val_loss:.5f}")
+        
+        # ===== Holdout Check ===== #
+        # New best on validation set
+        # --> Reset patience since we saw improvement
+        # --> Save new lowest loss and the new best model
+        if(avg_val_loss < lowest_val_loss):
+            patience_counter = 0
+            lowest_val_loss = avg_val_loss
+            torch.save(model.state_dict(), config.MODEL_DIR + "/trained_model.pt")
+        
+        # No improvement, increase patience counter for holdout validation
+        else:
+            patience_counter += 1
+            
+        # If maximum patience has been met, quit training. 
+        if(patience_counter >= patience):
+            print("Training ended due to early stopping.")
+            break
     
-    # Save and finish training
-    torch.save(model.state_dict(), config.MODEL_DIR + "/trained_model.pt")
+    # Notify that training has been completed
     print("Training Complete")
 
 # ===== Evaluation Methods ===== #
