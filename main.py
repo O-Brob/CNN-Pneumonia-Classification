@@ -48,12 +48,15 @@ def main():
                     print("Failed to initialize training: Dataset for training has not been downloaded.")
                     exit(1)
                 # Load Data:
-                (train, valid, _) = data_loader.create_dataloaders()
+                (train, valid, _) = data_loader.create_dataloaders(config.DATA_DIR)
                 
                 # Initialize Model:
                 cnn = model.CNN()
                 
-                optimizer = torch.optim.Adam(cnn.parameters(), config.LEARNING_RATE)
+                optimizer = torch.optim.Adam(
+                    cnn.parameters(), 
+                    config.LEARNING_RATE, 
+                    weight_decay=config.WEIGHT_DECAY)
                 criterion = torch.nn.BCEWithLogitsLoss()
                 
                 # Train Model:
@@ -66,7 +69,7 @@ def main():
                     exit(1)
                 
                 # Load Data:
-                (_, _, test) = data_loader.create_dataloaders()
+                (_, _, test) = data_loader.create_dataloaders(config.DATA_DIR)
                 
                 # Load Model:
                 loaded_model = model.CNN()
