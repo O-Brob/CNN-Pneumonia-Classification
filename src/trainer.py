@@ -121,14 +121,19 @@ def model_eval(model: nn.Module, eval_dl: DataLoader) -> None:
     """ 
     Evaluation loop for the Convolutional Neural Network, given the
     provided data loader for a data set to evaluate model performance on. 
+    Evaluation is done via standard accuracy calculations, 
+    as well as context recall, precision, false positive rate and F1-Score.
+    For more info on context recall, precision, false positive rate and F1-Score, see:
+    https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall
 
     Args:
         model (nn.Module): The neural network architecture to evaluate.
         eval_dl (DataLoader): The data loader providing (input, label) batches to evaluate on.
         
     Returns:
-        None: The function outputs the evaluation accuracy on the standard output stream,
-        alongside the fraction of correct predictions w.r.t. the total number of eval set samples.
+        None: The function outputs the evaluation accuracy, context recall, precision, false positive rate and F1-Score on 
+        the standard output stream, alongside the fraction of correct predictions w.r.t. the total number of eval set samples.
+        The Confusion Matrix of the evaluation is also output.
     """
     # Set model to evaluation mode
     model.eval()
@@ -137,9 +142,16 @@ def model_eval(model: nn.Module, eval_dl: DataLoader) -> None:
     print(f"Evaluation is initialized with (cuda/cpu): {config.DEVICE}")
     model.to(config.DEVICE)
     
-    # Counters
+    # Counters for Accuracy
     correct_preds = 0
     tot_samples   = 0
+    
+    # Counters for Confusion Matrix and evaluation metrics
+    true_pos   = 0
+    true_negs  = 0
+    
+    false_pos  = 0
+    false_negs = 0
     
     print("Evaluation started. Please wait.")
     
@@ -160,14 +172,46 @@ def model_eval(model: nn.Module, eval_dl: DataLoader) -> None:
             probs = torch.sigmoid(outputs) # sigmoid(x) = 1 / (1+e^(−x)​)
             preds = (probs >= 0.5).float() # .5 threshold to get pred: 0/1
             
+            # == Counter Updates == #
             # Sum boolean representation of tensor and convert
             # to a standard numeric scalar for comparison
             correct_preds += (preds == labels).sum().item()
             tot_samples   += labels.size(0) # size(0) is batch size
             
+            true_pos   += ((preds == 1) & (labels == 1)).sum().item()
+            true_negs  += ((preds == 0) & (labels == 0)).sum().item()
+            false_pos  += ((preds == 1) & (labels == 0)).sum().item()
+            false_negs += ((preds == 0) & (labels == 1)).sum().item()
+            
     # Finalize accuracy percentage
-    accuracy = (correct_preds / tot_samples) * 100
+    accuracy = (correct_preds / tot_samples) * 100 if tot_samples > 0 else 0.0
+    
+    # Recall = TP / (TP + FN)
+    actual_positives = true_pos + false_negs
+    recall = (true_pos / actual_positives) * 100 if actual_positives > 0 else 0.0
+    
+    # Precision = TP / (TP + FP)
+    all_classed_positives = true_pos + false_pos
+    precision = (true_pos / all_classed_positives) * 100 if all_classed_positives > 0 else 0.0
+    
+    # False Positive Rate = FP / (FP + TN)
+    all_actual_negatives = false_pos + true_negs
+    fpr = (false_pos / all_actual_negatives) * 100 if all_actual_negatives > 0 else 0.0
+    
+    # F1 Score = 2TP / (2TP + FP + FN) = 2 * ((precision * recall) / (precision + recall))
+    f1_divider = (precision + recall)
+    f1_score = 2 * ((precision * recall) / f1_divider) if f1_divider > 0 else 0.0
     
     # Output accuracy result
-    print("Evaluation Completed:")
+    print("\nEvaluation Completed:")
+    print("=============================================================================")
     print(f"Accuracy: {accuracy:.2f}%  --  ({correct_preds}/{tot_samples})")
+    print(f"Recall: {recall:.2f}% -- ({true_pos}/{actual_positives} pneumonia cases caught)")
+    print(f"Precision: {precision:.2f}% -- ({true_pos}/{all_classed_positives} pneumonia predictions were correct)")
+    print(f"False Positive Rate: {fpr:.2f}% -- ({false_pos}/{all_actual_negatives} healthy incorrectly flagged as pneumonia)")
+    print(f"F1 Score: {f1_score:.2f}%") # Harmonic mean of Recall & Precision
+    print("=============================================================================")
+    print()
+    print("Confusion Matrix:")
+    print(f"TP: {true_pos}\t| TN: {true_negs}")
+    print(f"FP: {false_pos}\t| FN: {false_negs}")
