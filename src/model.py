@@ -36,9 +36,14 @@ class CNN(nn.Module):
         self.pool    = nn.MaxPool2d(2, 2)
         self.dropout = nn.Dropout(config.DROPOUT)
         
+        # Adaptive avg pool to reduce feature count and overfitting
+        # (6, 6) to be able to learn feature relative to location to some extent
+        self.adapt_pool = nn.AdaptiveAvgPool2d((6, 6))
+        
         # Classification Head:
         # Image rescale size: 256 --> 128 -> 64 -> 32 after the Conv layers.
-        self.fullcon1 = nn.Linear(128 * 32 * 32, 512)
+        # Adaptive Pool rescales it to a fixed (6, 6)
+        self.fullcon1 = nn.Linear(128 * 6 * 6, 512)
         self.fullcon2 = nn.Linear(512, 1) # binary classification
     
     # Forward propagation for the model
@@ -76,12 +81,17 @@ class CNN(nn.Module):
         x = self.dropout(x)
         # Tensor: (batch, 128, 32, 32)
         
-        # Flattening; (128, 32, 32) -> (131072)
+        # Apply adaptive layer prior to flattening
+        x = self.adapt_pool(x)
+        # Tensor: (batch, 128, 6, 6)
+        
+        # Flattening; (128, 6, 6) -> (4608)
         x = torch.flatten(x, 1)
         
         # Fully connected layers
         x = self.fullcon1(x)
         x = F.relu(x)
+        x = self.dropout(x)
         x = self.fullcon2(x)
         
         return x
