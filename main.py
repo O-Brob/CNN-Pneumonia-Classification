@@ -40,7 +40,6 @@ def main():
                     stdout=subprocess.DEVNULL
                 )
                 print("Dataset downloaded. Ready for training.")
-                exit(0)
             
             # ===== Train CNN on dataset ===== #
             elif opt in ("-t", "--train"):
