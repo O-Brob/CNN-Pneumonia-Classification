@@ -1,5 +1,7 @@
 # ===== Imports ===== #
 import torch
+import os
+
 from src import config
 from torch import nn
 from torchvision import transforms
@@ -45,7 +47,7 @@ def model_infer(model: nn.Module, image_path : str) -> None:
     # Output results on standard output stream
     print(f"\nInference Completed:")
     print("=============================================================================")
-    print(f"File: {image_path}")
+    print(f"File: {os.path.basename(image_path)}")
     print(f"Prediction: {"Pneumonia" if pred == 1 else "Healthy"}")
     print(f"Confidence: {(confidence * 100):.2f}%")
     print("=============================================================================")
