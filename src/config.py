@@ -5,6 +5,8 @@ import torch
 DATA_DIR = "./data"
 MODEL_DIR = "./models"
 
+DATA_SPLIT_SEED = 50
+
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 WEIGHT_DECAY = 1e-3

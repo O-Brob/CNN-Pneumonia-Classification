@@ -99,9 +99,14 @@ def create_dataloaders(data_dir : str) -> tuple[DataLoader, DataLoader, DataLoad
         else:
             pneumonia_patients[patient_id].append(i)
     
-    # Get list of unique patients per class
-    normal_patient_ids    = list(normal_patients.keys())
-    pneumonia_patient_ids = list(pneumonia_patients.keys())
+    # Get list of unique patients per class 
+    # (sort to ensure it is always in the same order no matter how 
+    # it was read from the OS, s.t. static seed splits work consistently)
+    normal_patient_ids    = sorted(list(normal_patients.keys()))
+    pneumonia_patient_ids = sorted(list(pneumonia_patients.keys()))
+    
+    # Use a specified static seed so splits are identical aross every run
+    random.seed(config.DATA_SPLIT_SEED)
     
     # Undersample to balance classes at a patient level
     min_patients = min(len(normal_patient_ids), len(pneumonia_patient_ids))

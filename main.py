@@ -3,11 +3,13 @@ import torch
 import getopt, sys
 import os, shutil
 import subprocess
+from PIL import Image
 
 from src import config
 from src import data_loader
 from src import model
 from src import trainer
+from src import infer
 
 # ===== Fetch Args ===== #
 args = sys.argv[1:] # User provided arguments
@@ -17,10 +19,10 @@ long_options = ["help", "download", "train", "evaluate", "infer=", "clean"]
 # ===== Main Method ===== #
 def main():
     try:
-        (arguments, _) = getopt.getopt(args, options, long_options)
-        for (arg, _) in arguments:
+        (optlist, _) = getopt.getopt(args, options, long_options)
+        for (opt, arg) in optlist:
             # ===== Output help message ===== #
-            if arg in ("-h", "--help"):
+            if opt in ("-h", "--help"):
                 output =  "-h   --help            :   Print help information\n"
                 output += "-d   --download        :   Download x-ray dataset for training\n"
                 output += "-t   --train           :   Perform CNN training on GPU if available, else CPU\n"
@@ -30,7 +32,7 @@ def main():
                 print(output)
             
             # ===== Download dataset ===== #
-            elif arg in ("-d", "--download"):
+            elif opt in ("-d", "--download"):
                 print("Initializing dataset download. Please wait.")
                 subprocess.run(
                     ["bash", "./curl_data.sh"], 
@@ -38,10 +40,9 @@ def main():
                     stdout=subprocess.DEVNULL
                 )
                 print("Dataset downloaded. Ready for training.")
-                exit(0)
             
             # ===== Train CNN on dataset ===== #
-            elif arg in ("-t", "--train"):
+            elif opt in ("-t", "--train"):
                 # Check training datasets have been downloaded,
                 # then execute training loop.
                 if(not os.path.exists(f"{config.DATA_DIR}/Normal/") or not os.path.exists(f"{config.DATA_DIR}/Pneumonia/")):
@@ -63,7 +64,8 @@ def main():
                 trainer.model_fit(cnn, optimizer, criterion, train, valid, config.PATIENCE)
             
             # ===== Evaluate performance of model on test data ===== #
-            elif arg in ("-e", "--evaluate"):
+            elif opt in ("-e", "--evaluate"):
+                # Ensure the trained model exists
                 if(not os.path.exists(f"{config.MODEL_DIR}/trained_model.pt")):
                     print(f"Failed to evaluate model: Model not found in {config.MODEL_DIR}")
                     exit(1)
@@ -74,20 +76,42 @@ def main():
                 # Load Model:
                 loaded_model = model.CNN()
                 loaded_model.load_state_dict(torch.load(f"{config.MODEL_DIR}/trained_model.pt", weights_only=True))
-                loaded_model.eval()
                 
                 # Evaluate Model:
                 trainer.model_eval(loaded_model, test)
             
             # ===== Infer classification on input image ===== #
-            elif arg in ("-i", "--infer"):
-                # TODO: Fetch provided path (and check that provided path is valid and points to image)
-                # TODO: Check that model exists.
-                # TODO: Infer on i
-                pass
+            elif opt in ("-i", "--infer"):
+                # Get the absolute path of the file
+                abs_path = os.path.abspath(arg)
+                
+                # Ensure the trained model exists
+                if(not os.path.exists(f"{config.MODEL_DIR}/trained_model.pt")):
+                    print(f"Failed to infer: Model not found in {config.MODEL_DIR}")
+                    exit(1)
+                
+                # Ensure the provided file exists
+                if(not os.path.isfile(abs_path)):
+                    print(f"Failed to infer: Could not find the file")
+                    exit(1)
+                
+                # If file exists, ensure it is indeed an image file.
+                try: 
+                    with Image.open(abs_path) as img: 
+                        img.verify()
+                except:
+                    print(f"Failed to infer: The file is not an image file")
+                    exit(1)
+                
+                # Load Model:
+                loaded_model = model.CNN()
+                loaded_model.load_state_dict(torch.load(f"{config.MODEL_DIR}/trained_model.pt", weights_only=True))
+                
+                # Infer classification on the image passed as argument
+                infer.model_infer(loaded_model, abs_path)
             
             # ===== Clean downloaded dataset files and models ===== #
-            elif arg in ("-c", "--clean"):
+            elif opt in ("-c", "--clean"):
                 normal_path = f"{config.DATA_DIR}/Normal"
                 if os.path.exists(normal_path):
                     shutil.rmtree(normal_path)
