@@ -213,5 +213,5 @@ def model_eval(model: nn.Module, eval_dl: DataLoader) -> None:
     print("=============================================================================")
     print()
     print("Confusion Matrix:")
-    print(f"TP: {true_pos}\t| TN: {true_negs}")
-    print(f"FP: {false_pos}\t| FN: {false_negs}")
+    print(f"TP: {true_pos}\t| FP: {false_pos}")
+    print(f"FN: {false_negs}\t| TN: {true_negs}")
