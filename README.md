@@ -6,7 +6,13 @@ TODO
 TODO
 
 ## Table of Contents
-TODO
+1. [Features](#features)  
+2. [Project Structure](#project-structure)
+3. [Requirements](#requirements)
+4. [Installation](#installation)
+5. [User Guide](#user-guide)
+6. [Model & Dataset](#model--dataset)
+7. [License](#license)  
 
 ## Features
 TODO
@@ -78,4 +84,9 @@ TODO
 TODO
 
 ## License
-TODO
+This project is licensed under the MIT License.  
+See the full text in the [LICENSE.md](LICENSE.md) file in the repository root.
+
+### Third‑Party Licenses & Notices
+
+Third-party dependencies and their licenses are listed in [third-party-licenses.md](third-party-licenses.md).
