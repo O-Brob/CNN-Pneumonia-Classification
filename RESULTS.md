@@ -22,4 +22,3 @@ Probability scores alone do not represent reality. The four possible outcomes of
 |------------------------|:--------------:|:---------------:|
 | **Predicted Positive** | **143** (TP)   | **13** (FP)     |
 | **Predicted Negative** | **10** (FN)    | **250** (TN)    |
-|
