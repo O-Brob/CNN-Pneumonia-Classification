@@ -1,6 +1,8 @@
 # Convolutional Neural Network - Pneumonia X-ray Classification
 
-TODO
+[![GitHub Badge](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=fff&style=for-the-badge)](https://github.com/O-Brob/CNN-Pneumonia-Classification)
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
 
 ## Overview
 TODO
