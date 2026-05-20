@@ -17,7 +17,11 @@ TODO
 7. [License](#license)  
 
 ## Features
-TODO
+- **Unified CLI Entrypoint**: A single entry point, `main.py`, to handle automatic downloading, training, evaluating and inference via command line flags.
+
+- **Centralized Configuration**: Configure all hyperparameters, batch sizes, etc. from the same file, `src/config.py`.
+
+- **Hardware Agnostic**: Automatically detects and uses an NVIDIA GPU via CUDA if available, or falls back to using the CPU if none is detected.
 
 ## Project Structure
 ````
