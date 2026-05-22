@@ -5,7 +5,9 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
 
 ## Overview
-TODO
+*`CNN-Pneumonia-Classification`* is a personal learning project consisting of a PyTorch-based Convolutional Neural Network setup for detecting pneumonia from chest X-ray images. It includes full pipelines for training, evaluation, and inference on custom inputs via command line. 
+
+The goal of the project was to develop a neural network inspired by the VGG-16 architecture, trained to classify medical images for use as a diagnostic tool for radiologists or clinicians. For this project it was decided that pneumonia classification will be the focus, although the repository can be easily forked and adapted to other forms of medical imagery. There is also opportunity to modify the model structure or configuration parameters in an attempt to further improve the results.
 
 ## Table of Contents
 1. [Features](#features)  
