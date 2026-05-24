@@ -80,7 +80,19 @@ git clone https://github.com/O-Brob/CNN-Pneumonia-Classification.git
 The result will be the creation of a folder named `CNN-Pneumonia-Classification` in the target directory. This folder contains the project files, as shown in [Project Structure](#project-structure). To run the project, `main.py` will be used as a unified CLI entrypoint, as described in the section below.
 
 ## User Guide
-TODO
+
+The project includes full pipelines for training, evaluation, and inference on custom inputs. All these functions of the project are accessible via the unified command line interface, `main.py`, using CLI flags. As an overview, the following flags are considered, and can be called either individually or be chained:
+
+```
+-h   --help            :   Print help information
+-d   --download        :   Download x-ray dataset for training
+-t   --train           :   Perform CNN training on GPU if available, else CPU
+-e   --evaluate        :   Evaluate performance after training over a test set
+-i   --infer [image]   :   Infer a classification on the given image 
+-c   --clean           :   Remove downloaded datasets and saved models
+```
+
+A more in depth explanation of each of the flags and how they contribute to the pipeline is provided in the following subsections.
 
 ### Downloading Dataset
 TODO
