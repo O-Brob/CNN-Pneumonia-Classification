@@ -71,7 +71,13 @@ For this project to function as intended, there are certain software and hardwar
     - **Licensing**: Ensure you comply with the terms specified in `LICENSE.md` regarding the project's source files, and `third-party-licenses.md` regarding the use and distribution of the lung X-ray dataset that is used.
 
 ## Installation
-TODO
+Provided that the requirements above have been met, installing and subsequently running the project is simple. The most straightforward method to get the project files is via `Git` cloning, using the following command:
+
+```bash
+git clone https://github.com/O-Brob/CNN-Pneumonia-Classification.git
+```
+
+The result will be the creation of a folder named `CNN-Pneumonia-Classification` in the target directory. This folder contains the project files, as shown in [Project Structure](#project-structure). To run the project, `main.py` will be used as a unified CLI entrypoint, as described in the section below.
 
 ## User Guide
 TODO
