@@ -1,5 +1,4 @@
 # Convolutional Neural Network - Pneumonia X-ray Classification
-
 [![GitHub Badge](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=fff&style=for-the-badge)](https://github.com/O-Brob/CNN-Pneumonia-Classification)
 [![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)
@@ -57,7 +56,7 @@ For this project to function as intended, there are certain software and hardwar
     - **External Packages**: All necessary external packages are listed in the `requirements.txt` file.
 
     To install all required dependencies, run:
-    ````
+    ````bash
     pip install -r requirements.txt
     ````
 - 2.) Hardware Recommendations
@@ -80,7 +79,6 @@ git clone https://github.com/O-Brob/CNN-Pneumonia-Classification.git
 The result will be the creation of a folder named `CNN-Pneumonia-Classification` in the target directory. This folder contains the project files, as shown in [Project Structure](#project-structure). To run the project, `main.py` will be used as a unified CLI entrypoint, as described in the section below.
 
 ## User Guide
-
 The project includes full pipelines for training, evaluation, and inference on custom inputs. All these functions of the project are accessible via the unified command line interface, `main.py`, using CLI flags. As an overview, the following flags are considered, and can be called either individually or be chained:
 
 ```
@@ -92,10 +90,14 @@ The project includes full pipelines for training, evaluation, and inference on c
 -c   --clean           :   Remove downloaded datasets and saved models
 ```
 
-A more in depth explanation of each of the flags and how they contribute to the pipeline is provided in the following subsections.
+A more in-depth explanation of each of the flags and how they contribute to the pipeline is provided in the following subsections. For instructions on how to execute the full pipeline, see [Executing full pipeline](#executing-full-pipeline).
 
 ### Downloading Dataset
-TODO
+Prior to training the model, it is required to download and process the dataset by splitting the images into folders `Normal` and `Pneumonia`. This can be done automatically via the shell script `data/curl_data.sh`. This shell script can be automatically invoked by passing the `-d` or `--download` flag to `main.py`, as follows:
+
+```bash
+python main.py --download
+```
 
 ### Training 
 TODO
@@ -105,6 +107,13 @@ TODO
 
 ### Inference
 TODO
+
+### Executing Full Pipeline
+As the CLI flags for the functions mentioned above can be chained, they can be conveniently executed one after another from a single invocation as a result. The following arguments sequentially downloads and processes the dataset, trains the model, and evaluates the model, after which inference is available:
+
+```bash
+python main.py --download --train --evaluate
+```
 
 ## Model & Dataset
 TODO
