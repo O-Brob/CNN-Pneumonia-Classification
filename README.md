@@ -53,6 +53,8 @@ For this project to function as intended, there are certain software and hardwar
 - 1.) Software & Dependencies
     - **Python**: (Version 3.10+)
 
+    - **Environment**: A bash shell (Linux, MacOS, or Git Bash/WSL on Windows)
+
     - **External Packages**: All necessary external packages are listed in the `requirements.txt` file.
 
     To install all required dependencies, run:
