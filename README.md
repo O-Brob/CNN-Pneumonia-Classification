@@ -102,13 +102,33 @@ python main.py --download
 ```
 
 ### Training 
-TODO
+Once the dataset has been downloaded as per the instructions above, training can be initiated in a similar fashion by passing the `-t` or `--train` flag to `main.py`, as follows:
+
+```bash
+python main.py --train
+```
+
+To modify the hyperparameter configuration used during training, refer to the file `src/config.py` and the global parameters therein.
+
+Once training has been completed, the best model over the validation dataset will be saved as `models/trained_model.pt`. This model will be used for both evaluation and inference.
 
 ### Evaluation
-TODO
+To evaluate the model, it is required to have trained the model, such that `models/trained_model.pt` exists. Once this prerequisite is completed, evaluation of the model can be initated by passing the `-e` or `--evaluate` flag to `main.py`, as follows:
+
+```bash
+python main.py --evaluate
+```
+
+This will output an accuracy metric over the test dataset alongside metrics such as recall, precision, false positive rate and F1-Score. Furthermore, a confusion matrix will be output.
+
+For reference on what to expect using the default hyperparameter configuration set in `src/config.py`, see [RESULTS.md](RESULTS.md), which shows the result of training and evaluating the developed model.
 
 ### Inference
-TODO
+To use single image inference, it is required to have trained the model, such that `models/trained_model.pt` exists, just as for evaluation. Once this prerequisite is completed, inference can be initiated by passing the `-i` or `--infer` flag to `main.py`, followed by an absolute or relative path to an x-ray image, as follows:
+
+```bash
+python main.py --infer path/to/image.png
+```
 
 ### Executing Full Pipeline
 As the CLI flags for the functions mentioned above can be chained, they can be conveniently executed one after another from a single invocation as a result. The following arguments sequentially downloads and processes the dataset, trains the model, and evaluates the model, after which inference is available:
