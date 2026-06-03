@@ -138,7 +138,46 @@ python main.py --download --train --evaluate
 ```
 
 ## Model & Dataset
-TODO
+
+### Model Architechture
+The classifier uses a VGG-inspired Convolutional Neural Network to be used for binary classification of pneumonia in chest X-ray images. The architecture is designed for 256x256 grayscale input images (as prepared in the data loader) and consists of:
+
+#### Convolutional Feature Extraction:
+- **Conv. Block 1:** Conv2d (1->32 filters, 3x3 kernel) -> BatchNorm -> ReLU -> MaxPool (2x2) -> Dropout
+
+- **Conv. Block 2:** Conv2d (32->64 filters, 3x3 kernel) -> BatchNorm -> ReLU -> MaxPool (2x2) -> Dropout
+
+- **Conv. Block 3:** Conv2d (64->128 filters, 3x3 kernel) -> BatchNorm -> ReLU -> MaxPool (2x2) -> Dropout
+
+Batch normalization is used to stabilize training and converge faster. The use of max-pooling is intended to reduce spatial dimensions to extract the "more important" details and produce a more generalized representation of the data. Dropout is used to prevent overfitting.
+
+#### Classification Head:
+- Adaptive Average Pooling with output size 6x6 is used to preserve the learned spatial features relative to near surroundings while reducing parameter count by a lot.
+
+- Flattening is done to a 4608-dimensional feature vector.
+
+- Fully Connected Layer (4608 -> 512 units) with ReLU activation.
+
+- Output Layer (512 -> 1 unit) to produce raw logits for the binary classification. Raw logits are used to improve numerical stability during training.
+
+### Dataset
+The model is trained on the Kaggle [**Chest X-Ray Images (Pneumonia)**](third-party-licenses.md#chest-x-ray-images-pneumonia) dataset, a publicly available collection of chest X-ray images of both healthy patients and patients with pneumonia. 
+
+#### Dataset Characteristics:
+- **Total Images:** 5863 X-ray images of patients aged 1-5.
+
+- **Classes:** Normal, Pneumonia.
+
+- **Image Format:** JPEG, 8-bitdepth with resolutions ranging up to ~2000x2000 pixels.
+
+- **Imbalance:** Dataset contains class imbalance with more pneumonia cases than normal cases in the training set.
+
+#### Preprocessing Pipeline:
+- Images are set to grayscale and resized to 256x256 pixels to meet model input expectations.
+
+- Pixel values normalized via Z-Score normalization.
+
+- The data imbalance is solved via undersampling. It is also ensured that different X-rays of the same patient does not leak between datasets.
 
 ## License
 This project is licensed under the MIT License.  
