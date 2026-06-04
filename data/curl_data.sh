@@ -8,12 +8,12 @@ unzip ./chest-xray-pneumonia.zip
 
 # Create output directories for both Pneumonia & Normal x-rays
 mkdir ./Pneumonia
-mkDir ./Normal
+mkdir ./Normal
 
 # Gather all Pneumonia x-rays in ./Pneumonia and
 # all Normal x-rays in ./Normal, to allow manual split.
-mv ./chest_xray/*/Pneumonia/* ./Pneumonia/
-mv ./chest_xray/*/Normal/* ./Normal/
+mv ./chest_xray/*/PNEUMONIA/* ./Pneumonia/
+mv ./chest_xray/*/NORMAL/* ./Normal/
 
 # Clean up the no longer needed files.
 rm -rf ./chest_xray
