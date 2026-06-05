@@ -49,7 +49,7 @@ def main():
                     print("Failed to initialize training: Dataset for training has not been downloaded.")
                     exit(1)
                 # Load Data:
-                (train, valid, _) = data_loader.create_dataloaders(config.DATA_DIR)
+                (train, valid, _) = data_loader.create_dataloaders()
                 
                 # Initialize Model:
                 cnn = model.CNN()
@@ -61,7 +61,7 @@ def main():
                 criterion = torch.nn.BCEWithLogitsLoss()
                 
                 # Train Model:
-                trainer.model_fit(cnn, optimizer, criterion, train, valid, config.PATIENCE)
+                trainer.model_fit(cnn, optimizer, criterion, train, valid)
             
             # ===== Evaluate performance of model on test data ===== #
             elif opt in ("-e", "--evaluate"):
@@ -71,7 +71,7 @@ def main():
                     exit(1)
                 
                 # Load Data:
-                (_, _, test) = data_loader.create_dataloaders(config.DATA_DIR)
+                (_, _, test) = data_loader.create_dataloaders()
                 
                 # Load Model:
                 loaded_model = model.CNN()

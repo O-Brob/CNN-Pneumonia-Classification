@@ -12,8 +12,7 @@ def model_fit(
     optimizer: optim.Optimizer, 
     criterion: nn.modules.loss._Loss, 
     train_dl: DataLoader,
-    val_dl: DataLoader,
-    patience: int) -> None:
+    val_dl: DataLoader) -> None:
     """Training loop for the Convolutional Neural Network.
 
     Args:
@@ -107,7 +106,7 @@ def model_fit(
             patience_counter += 1
             
         # If maximum patience has been met, quit training. 
-        if(patience_counter >= patience):
+        if(patience_counter >= config.PATIENCE):
             print("Training ended due to early stopping.")
             break
     

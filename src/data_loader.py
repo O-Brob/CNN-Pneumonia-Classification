@@ -47,16 +47,13 @@ def _extract_patient_id(filename: str, label: int) -> str:
     # Fallback
     return filename
 
-def create_dataloaders(data_dir : str) -> tuple[DataLoader, DataLoader, DataLoader]:
+def create_dataloaders() -> tuple[DataLoader, DataLoader, DataLoader]:
     """
     Creates three DataLoaders for Training, Validation, and Testing with a 70-15-15 split.
     Preprocessing is done on index level rather than holding images in memory for efficiency.
     Undersamples the dominant dataset to match the size of the smaller dataset to remove
     weighted biases in the training data without resorting to augmentation, e.g. in
     cases where flipping images creates unrealistic features for training data, as in for X-Rays.
-
-    Args:
-        data_dir (str): The root of a directory containing folders of binary classified data
 
     Returns:
         tuple[DataLoader, DataLoader, DataLoader]: Train, Validation and Testing DataLoaders
@@ -74,7 +71,7 @@ def create_dataloaders(data_dir : str) -> tuple[DataLoader, DataLoader, DataLoad
     ])
     
     # Load the data directory
-    dataset = datasets.ImageFolder(root=data_dir, transform=std_transform)
+    dataset = datasets.ImageFolder(root=config.DATA_DIR, transform=std_transform)
     
     # Extract labels and group indices by patient IDs and class
     target_labels      = dataset.targets
