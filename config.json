@@ -1,0 +1,15 @@
+{
+    "data_dir": "./data",
+    "model_dir": "./models",
+    
+    "data_split_seed": 50,
+
+    "batch_size": 32,
+    "learning_rate": 1e-4,
+    "weight_decay": 1e-3,
+    "dropout": 0.5,
+
+    "epochs": 200,
+    "patience": 5,
+    "device": "auto"
+}

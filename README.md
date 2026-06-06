@@ -20,9 +20,9 @@ The goal of the project was to develop a neural network inspired by the VGG-16 a
 ## Features
 - **Unified CLI Entrypoint**: A single entry point, `main.py`, to handle automatic downloading, training, evaluating and inference via command line flags.
 
-- **Centralized Configuration**: Configure all hyperparameters, batch sizes, etc. from the same file, `src/config.py`.
+- **Centralized Configuration**: Configure all hyperparameters, batch sizes, etc. from the same file, `config.json`.
 
-- **Hardware Agnostic**: Automatically detects and uses an NVIDIA GPU via CUDA if available, or falls back to using the CPU if none is detected.
+- **Hardware Agnostic**: Automatically detects and uses an NVIDIA GPU via CUDA if available, or falls back to using the CPU if none is detected by configuring the device in `config.json` to "auto" (alternatively, "cuda" or "cpu").
 
 ## Project Structure
 ````
@@ -33,12 +33,13 @@ CNN-Pneumonia-Classification/
 │   └── .gitignore          (Ensure folder exists & prevent upload)
 ├── src/                    (Folder of all Python source code)
 │   ├── __init__.py         (Marks directory as Python package)
-│   ├── config.py           (Centralized hyperparameters & paths)
+│   ├── config.py           (Config loader & exposed config values)
 │   ├── data_loader.py      (Transforms & Preprocessing of Dataset)
 │   ├── infer.py            (Perform inference on singular x-ray)
 │   ├── model.py            (CNN architecture definition)
 │   └── trainer.py          (Trains, validates, evaluates model)
 ├── .gitignore              (Main .gitignore of non-source files)
+├── config.json             (Centralized hyperparameters & paths)
 ├── LICENSE.md              (Legal usage/distribution terms)
 ├── main.py                 (CLI entry point for the program)
 ├── README.md               (Project description & instructions)
@@ -64,7 +65,7 @@ For this project to function as intended, there are certain software and hardwar
 - 2.) Hardware Recommendations
     - **GPU**: A CUDA-capable NVIDIA GPU is recommended for training the CNN model. Training on a CPU is possible, and will be done automatically if no CUDA-capable GPU is found, but is *significantly* slower.
 
-    - **VRAM**: At least 4GB of VRAM is needed to comfortably handle standard batch sizes during training in this project. With the default configuration of `src/config.py`, a use of approximately 3.8GB of VRAM was measured on my system.
+    - **VRAM**: At least 4GB of VRAM is needed to comfortably handle standard batch sizes during training in this project. With the default configuration of `config.json`, a use of approximately 3.8GB of VRAM was measured on my system.
 
 - 3.) Dataset & Permission Compliance
     - **Data Access**: Execution of the `data/curl_data.sh` script for downloading the dataset prior to unpacking it requires an active internet connection, and more notably, `curl` installed on your system.
@@ -108,7 +109,7 @@ Once the dataset has been downloaded as per the instructions above, training can
 python main.py --train
 ```
 
-To modify the hyperparameter configuration used during training, refer to the file `src/config.py` and the global parameters therein.
+To modify the hyperparameter configuration used during training, refer to the file `config.json` and the global parameters therein.
 
 Once training has been completed, the best model over the validation dataset will be saved as `models/trained_model.pt`. This model will be used for both evaluation and inference.
 
@@ -121,7 +122,7 @@ python main.py --evaluate
 
 This will output an accuracy metric over the test dataset alongside metrics such as recall, precision, false positive rate and F1-Score. Furthermore, a confusion matrix will be output.
 
-For reference on what to expect using the default hyperparameter configuration set in `src/config.py`, see [RESULTS.md](RESULTS.md), which shows the result of training and evaluating the developed model.
+For reference on what to expect using the default hyperparameter configuration set in `config.json`, see [RESULTS.md](RESULTS.md), which shows the result of training and evaluating the developed model.
 
 ### Inference
 To use single image inference, it is required to have trained the model, such that `models/trained_model.pt` exists, just as for evaluation. Once this prerequisite is completed, inference can be initiated by passing the `-i` or `--infer` flag to `main.py`, followed by an absolute or relative path to an x-ray image, as follows:
